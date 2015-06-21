@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h1>Simulated Awareness</h1>
+    Această aplicație reprezintă un chat (în limba engleză) între un utilizator și un AI care răspunde atât prin text, cât și prin schimbarea avatarului său, în funcție de input-ul utilizatorului. De fiecare dată când utilizatorul trimite un text AI-ului, acesta împarte textul în cuvinte, apoi analizează fiecare cuvânt în parte și încearcă să determine o reacție corespunzătoare pe baza cuvintelor recunoscute. Nerecunoașterea niciunui cuvânt duce la generarea stării de confuzie.
+	Programul cunoaște patru emoții:
+    <ul>
+        <li>Fericirea</li>
+        <li>Tristețea</li>
+        <li>Mânia</li>
+        <li>Confuzia</li>
+    </ul>
+Programul poate recunoaște și cuvinte care nu sunt asociate primelor 3 emoții: cuvinte de negare („not”), pronume („I”, „you”, „they”), sau cuvinte de salut („hello”).
+Utilizatorul poate învăța programul noi cuvinte prin două metode din interiorul aplicației. Prima metodă constă în selectarea cuvântului dorit și a apăsării butonului „Mark word as ‚happy’”, „Mark word as ‚sad’” sau „Mark word as ‚angry’”, pentru a asocia cuvântul ales cu una din emoțiile „Fericire”, „Tristețe”, respectiv „Mânie”. A doua metodă accesibilă din interiorul aplicației este de a memora cuvântul selectat folosind meniul context apărut prin apăsarea butonului de click-dreapta a mouse-ului.
+Toate cuvintele și reacțiile-text memorate de aplicație sunt grupate în fișiere aflate în folderele „vocabulary”, respectiv „reactions”, plasat la rândul lor în folderul „resources”. Dacă aceste fișiere nu există, vor fi create și populate de către aplicație la pornirea ei. Pot fi adăugate noi cuvinte sau reacții-text dacă acestea se scriu câte una pe linie în fișierele corespunzătoare, înainte de pornirea aplicației.
+AI-ul reține atitudinea generală a utilizatorului față de el (nu se iau în calcul cazurile în care utilizatorul vorbește despre el însuși, sau despre o altă persoană), și câteodată ia decizii ținând cont de aceasta.
+Atunci când se introduce un text, programul transformă prima literă în majusculă (în cazul în care nu a fost scrisă în acest fel de către utilizator) și adaugă un punct dacă nu există nici un semn de punctuație la sfârșit. Această transformare a textului îndeplinește doar un rol estetic, și nu este esențială în analiza textului.
+
+Un alt mic feature este că AI-ul reține ultima reacție-text folosită pentru fiecare emoție, iar atunci cand se alege la random o reacție, se verifică ca aceasta să nu fie aceeași reacție-text aleasă anterior (de exemplu, dacă se alege reacția fericită nr. 1, următoarea dată când trebuie aleasă o reacție fericită, programul se asigură că aceeași reacție nr. 1, ci nr. 0, 2, 3, etc.).
+    </body>
+</html>
