@@ -58,7 +58,6 @@ public class AvatarWindow extends javax.swing.JFrame {
                     setState("normal");
                 }
             } catch (InterruptedException ex) {
-                System.out.println(ex.getMessage());
             }
         }
     }
@@ -84,7 +83,6 @@ public class AvatarWindow extends javax.swing.JFrame {
             }
             this.repaint();
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
         }
     }
 
@@ -99,13 +97,11 @@ public class AvatarWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         setTitle("Albert");
-        setAlwaysOnTop(true);
         setAutoRequestFocus(false);
         setFocusable(false);
         setMaximumSize(new java.awt.Dimension(400, 400));
         setMinimumSize(new java.awt.Dimension(400, 400));
         setName("avatarFrame"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(400, 400));
         setResizable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

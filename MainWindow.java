@@ -1,5 +1,11 @@
 package licenta;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Alex
@@ -16,7 +22,8 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         this.setLocation(120, 80);
         avatarWindow = new AvatarWindow();
-        avatarWindow.setLocation(780, 80);
+        avatarWindow.setSize(400, 400);
+        avatarWindow.setLocation(830, 80);
         avatarWindow.setVisible(true);
         textAnalyser = new TextAnalyser();
     }
@@ -29,6 +36,9 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuItemHappy = new javax.swing.JMenuItem();
         jMenuItemSad = new javax.swing.JMenuItem();
         jMenuItemAngry = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItemSynonyms = new javax.swing.JMenuItem();
+        jMenuItemLearn = new javax.swing.JMenuItem();
         jTextFieldOutput = new javax.swing.JTextField();
         jLabelReaction = new javax.swing.JLabel();
         jButtonInput = new javax.swing.JButton();
@@ -40,6 +50,13 @@ public class MainWindow extends javax.swing.JFrame {
         jButtonAngry = new javax.swing.JButton();
         jButtonReset = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jButtonReloadReactions = new javax.swing.JButton();
+        jButtonReloadWords = new javax.swing.JButton();
+        jButtonOpenReactions = new javax.swing.JButton();
+        jButtonOpenWords = new javax.swing.JButton();
+        jCheckBoxReverse = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        jSliderQuality = new javax.swing.JSlider();
 
         jMenuItemHappy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/licenta/happyIcon.png"))); // NOI18N
         jMenuItemHappy.setText("Set as happy word");
@@ -70,11 +87,32 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         jPopupMenu.add(jMenuItemAngry);
+        jPopupMenu.add(jSeparator1);
+
+        jMenuItemSynonyms.setIcon(new javax.swing.ImageIcon(getClass().getResource("/licenta/dictionaryIcon.png"))); // NOI18N
+        jMenuItemSynonyms.setText("Find synonyms");
+        jMenuItemSynonyms.setToolTipText("Searches for synonyms for a selected word.");
+        jMenuItemSynonyms.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSynonymsActionPerformed(evt);
+            }
+        });
+        jPopupMenu.add(jMenuItemSynonyms);
+
+        jMenuItemLearn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/licenta/learnIcon.png"))); // NOI18N
+        jMenuItemLearn.setText("Learn the word");
+        jMenuItemLearn.setToolTipText("Tries to learn the selected word.");
+        jMenuItemLearn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemLearnActionPerformed(evt);
+            }
+        });
+        jPopupMenu.add(jMenuItemLearn);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("More than a feeling");
+        setTitle("Simulated Awarness");
         setName("mainFrame"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(650, 500));
+        setPreferredSize(new java.awt.Dimension(700, 500));
         setResizable(false);
 
         jTextFieldOutput.setEditable(false);
@@ -163,6 +201,52 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jButtonReloadReactions.setText("Reload reactions");
+        jButtonReloadReactions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonReloadReactionsActionPerformed(evt);
+            }
+        });
+
+        jButtonReloadWords.setText("Reload words");
+        jButtonReloadWords.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonReloadWordsActionPerformed(evt);
+            }
+        });
+
+        jButtonOpenReactions.setText("Reactions folder");
+        jButtonOpenReactions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonOpenReactionsActionPerformed(evt);
+            }
+        });
+
+        jButtonOpenWords.setText("Known words folder");
+        jButtonOpenWords.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonOpenWordsActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxReverse.setText("Reverse search");
+        jCheckBoxReverse.setToolTipText("Changes how the program learns the selected word.");
+        jCheckBoxReverse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxReverseActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Search depth:");
+
+        jSliderQuality.setMajorTickSpacing(1);
+        jSliderQuality.setMaximum(3);
+        jSliderQuality.setMinimum(1);
+        jSliderQuality.setPaintTicks(true);
+        jSliderQuality.setSnapToTicks(true);
+        jSliderQuality.setToolTipText("Higher values returns more synonyms of the selected word.");
+        jSliderQuality.setValue(1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -170,50 +254,76 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(61, 61, 61)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldInput)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonHappy, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonSad, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonAngry, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButtonReset, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
-                            .addComponent(jButtonInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jButtonHappy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonSad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonAngry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabelReaction)
-                        .addGap(73, 73, 73)
-                        .addComponent(jTextFieldOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
-                .addGap(59, 59, 59))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBoxReverse)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSliderQuality, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2)
+                    .addComponent(jTextFieldInput))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonReloadReactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonReloadWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonOpenReactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonOpenWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(53, 53, 53))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelReaction)
-                    .addComponent(jButton1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSliderQuality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabelReaction)
+                                .addComponent(jTextFieldOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jCheckBoxReverse)
+                                .addComponent(jLabel1)))))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButtonReloadReactions, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonReloadWords, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonOpenReactions, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonOpenWords, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonHappy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonSad, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButtonAngry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButtonReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldInput, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonInput, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonHappy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonSad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonAngry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldInput, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -263,6 +373,9 @@ public class MainWindow extends javax.swing.JFrame {
             textAnalyser.saveNewWord(jTextAreaChat.getSelectedText(), "happy");
         } else if (jTextFieldInput.getSelectedText() != null) {
             textAnalyser.saveNewWord(jTextFieldInput.getSelectedText(), "happy");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItemHappyActionPerformed
 
@@ -278,6 +391,9 @@ public class MainWindow extends javax.swing.JFrame {
             textAnalyser.saveNewWord(jTextAreaChat.getSelectedText(), "sad");
         } else if (jTextFieldInput.getSelectedText() != null) {
             textAnalyser.saveNewWord(jTextFieldInput.getSelectedText(), "sad");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItemSadActionPerformed
 
@@ -286,6 +402,9 @@ public class MainWindow extends javax.swing.JFrame {
             textAnalyser.saveNewWord(jTextAreaChat.getSelectedText(), "angry");
         } else if (jTextFieldInput.getSelectedText() != null) {
             textAnalyser.saveNewWord(jTextFieldInput.getSelectedText(), "angry");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItemAngryActionPerformed
 
@@ -301,6 +420,9 @@ public class MainWindow extends javax.swing.JFrame {
             textAnalyser.saveNewWord(jTextAreaChat.getSelectedText(), "happy");
         } else if (jTextFieldInput.getSelectedText() != null) {
             textAnalyser.saveNewWord(jTextFieldInput.getSelectedText(), "happy");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonHappyActionPerformed
 
@@ -309,6 +431,9 @@ public class MainWindow extends javax.swing.JFrame {
             textAnalyser.saveNewWord(jTextAreaChat.getSelectedText(), "sad");
         } else if (jTextFieldInput.getSelectedText() != null) {
             textAnalyser.saveNewWord(jTextFieldInput.getSelectedText(), "sad");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonSadActionPerformed
 
@@ -317,6 +442,9 @@ public class MainWindow extends javax.swing.JFrame {
             textAnalyser.saveNewWord(jTextAreaChat.getSelectedText(), "angry");
         } else if (jTextFieldInput.getSelectedText() != null) {
             textAnalyser.saveNewWord(jTextFieldInput.getSelectedText(), "angry");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonAngryActionPerformed
 
@@ -328,12 +456,127 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonResetActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(avatarWindow.isVisible()) {
+        if (avatarWindow.isVisible()) {
             avatarWindow.setVisible(false);
         } else {
             avatarWindow.setVisible(true);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonReloadReactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReloadReactionsActionPerformed
+        textAnalyser.reloadReactions();
+    }//GEN-LAST:event_jButtonReloadReactionsActionPerformed
+
+    private void jButtonReloadWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReloadWordsActionPerformed
+        textAnalyser.reloadVocabulary();
+    }//GEN-LAST:event_jButtonReloadWordsActionPerformed
+
+    private void jButtonOpenReactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenReactionsActionPerformed
+        try {
+            Desktop.getDesktop().open(new File("resources/reactions"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }//GEN-LAST:event_jButtonOpenReactionsActionPerformed
+
+    private void jButtonOpenWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenWordsActionPerformed
+        try {
+            Desktop.getDesktop().open(new File("resources/vocabulary"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }//GEN-LAST:event_jButtonOpenWordsActionPerformed
+
+    private void jMenuItemSynonymsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSynonymsActionPerformed
+        StringBuilder message = new StringBuilder();
+        String selectedWord = new String();
+        int numberOfNewlines = 0;
+        if (jTextAreaChat.getSelectedText() != null) {
+            selectedWord = jTextAreaChat.getSelectedText();
+        } else if (jTextFieldInput.getSelectedText() != null) {
+            selectedWord = jTextFieldInput.getSelectedText();
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        ArrayList<String> synonyms = textAnalyser.getSynonyms(selectedWord,
+                jSliderQuality.getValue());
+        if (synonyms.isEmpty()) {
+            message.append("No synonyms have been found for the selected word");
+        } else {
+            if (synonyms.size() == 1) {
+                message.append("Synonym found:");
+            } else {
+                message.append("Synonyms found:");
+            }
+            for (String synonym : synonyms) {
+                message.append(' ').append(synonym).append(',');
+                if (message.length() >= (numberOfNewlines + 1) * 80) {
+                    message.append('\n');
+                    numberOfNewlines++;
+                }
+            }
+            message.delete(message.lastIndexOf(","), message.length());
+            message.append('.');
+        }
+        JOptionPane.showMessageDialog(null, message.toString(), "Synonyms found",
+                JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_jMenuItemSynonymsActionPerformed
+
+    private void jCheckBoxReverseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxReverseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxReverseActionPerformed
+
+    private void jMenuItemLearnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLearnActionPerformed
+        String selectedWord = new String();
+        String reactionGeneratedByWord = "confused";
+        if (jTextAreaChat.getSelectedText() != null) {
+            selectedWord = jTextAreaChat.getSelectedText();
+        } else if (jTextFieldInput.getSelectedText() != null) {
+            selectedWord = jTextFieldInput.getSelectedText();
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a word", "No word selected",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!selectedWord.isEmpty() && !textAnalyser.isReactionWord(selectedWord)) {
+            if (!jCheckBoxReverse.isSelected()) {
+                reactionGeneratedByWord = textAnalyser.learnWord(selectedWord,
+                        jSliderQuality.getValue());
+            } else {
+                reactionGeneratedByWord = textAnalyser.reverseLearnWord(selectedWord,
+                        jSliderQuality.getValue());
+            }
+            String message;
+            switch (reactionGeneratedByWord) {
+                case "happy":
+                    message = "Learned \"" + selectedWord + "\" as a happiness"
+                            + " generating word";
+                    break;
+                case "sad":
+                    message = "Learned \"" + selectedWord + "\" as a sadness"
+                            + " generating word";
+                    break;
+                case "angry":
+                    message = "Learned \"" + selectedWord + "\" as a angriness"
+                            + " generating word";
+                    break;
+                default:
+                    message = "Could not learn the selected word";
+                    break;
+            }
+            JOptionPane.showMessageDialog(null, message.toString(),
+                    reactionGeneratedByWord.equals("confused") ? "Word has not "
+                            + "been learned" : "Word has been learned",
+                    JOptionPane.PLAIN_MESSAGE);
+        } else if (textAnalyser.isReactionWord(selectedWord)) {
+            JOptionPane.showMessageDialog(null, "The word you have selected is "
+                    + "already known",
+                    "Word already known",
+                    JOptionPane.PLAIN_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemLearnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -351,20 +594,18 @@ public class MainWindow extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
 
+        //</editor-fold>
+        //</editor-fold>
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new MainWindow().setVisible(true);
             }
@@ -376,14 +617,24 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonAngry;
     private javax.swing.JButton jButtonHappy;
     private javax.swing.JButton jButtonInput;
+    private javax.swing.JButton jButtonOpenReactions;
+    private javax.swing.JButton jButtonOpenWords;
+    private javax.swing.JButton jButtonReloadReactions;
+    private javax.swing.JButton jButtonReloadWords;
     private javax.swing.JButton jButtonReset;
     private javax.swing.JButton jButtonSad;
+    private javax.swing.JCheckBox jCheckBoxReverse;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelReaction;
     private javax.swing.JMenuItem jMenuItemAngry;
     private javax.swing.JMenuItem jMenuItemHappy;
+    private javax.swing.JMenuItem jMenuItemLearn;
     private javax.swing.JMenuItem jMenuItemSad;
+    private javax.swing.JMenuItem jMenuItemSynonyms;
     private javax.swing.JPopupMenu jPopupMenu;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JSlider jSliderQuality;
     private javax.swing.JTextArea jTextAreaChat;
     private javax.swing.JTextField jTextFieldInput;
     private javax.swing.JTextField jTextFieldOutput;

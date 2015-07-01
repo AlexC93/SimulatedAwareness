@@ -31,6 +31,7 @@ public class TextAnalyser {
     private int[] globalReactionCount;
     private String lastReaction;
     private final Random randomNumberGenerator;
+    private final SynonymFinder synonymFinder;
 
     /**
      * Constructor for the class that returns reactions based on text input
@@ -38,7 +39,7 @@ public class TextAnalyser {
     public TextAnalyser() {
         loadReactions();
         loadVocabulary();
-
+        synonymFinder = new SynonymFinder();
         randomNumberGenerator = new Random();
     }
 
@@ -64,6 +65,19 @@ public class TextAnalyser {
         lastThirdPersonReactionNumber = -1;
         lastHelloReactionNumber = -1;
         globalReactionCount = new int[3];
+    }
+    
+    public void reloadReactions() {
+        loadHappyReactions();
+        loadSadReactions();
+        loadAngryReactions();
+        loadConfusedReactions();
+        loadFirstPersonPositiveRudeReactions();
+        loadFirstPersonNegativeRudeReactions();
+        loadFirstPersonPositivePoliteReactions();
+        loadFirstPersonNegativePoliteReactions();
+        loadThirdPersonReactions();
+        loadHelloReactions();
     }
 
     private void loadHappyReactions() {
@@ -373,6 +387,17 @@ public class TextAnalyser {
     }
 
     private void loadVocabulary() {
+        loadNegationWords();
+        loadHappyWords();
+        loadSadWords();
+        loadAngryWords();
+        loadFirstPersonWords();
+        loadSecondPersonWords();
+        loadThirdPersonWords();
+        loadHelloWords();
+    }
+    
+    public void reloadVocabulary() {
         loadNegationWords();
         loadHappyWords();
         loadSadWords();
@@ -1013,10 +1038,13 @@ public class TextAnalyser {
         if (input == ')') {
             return true;
         }
+        if (input == '~') {
+            return true;
+        }
         return input == '\"';
     }
 
-    private String getFirstWord(String text) {
+    private String getNextWord(String text) {
         StringBuilder word = new StringBuilder();
         boolean foundFirstLetter = false;
         for (int i = 0; i < text.length() && (!isSeparator(text.charAt(i))
@@ -1058,7 +1086,7 @@ public class TextAnalyser {
         return angryWords.contains(word.toLowerCase());
     }
 
-    private boolean isReactionWord(String word) {
+    public boolean isReactionWord(String word) {
         return isHappyWord(word) || isSadWord(word) || isAngryWord(word);
     }
 
@@ -1079,8 +1107,8 @@ public class TextAnalyser {
 
     private boolean inputHasGreeting() {
         String word;
-        for (int i = 0; i < processedWords.size(); i++) {
-            word = processedWords.get(i);
+        for (String processedWord : processedWords) {
+            word = processedWord;
             if (isHelloWord(word)) {
                 return true;
             }
@@ -1094,15 +1122,6 @@ public class TextAnalyser {
             if (isLetter(input.charAt(i)) || isSeparator(input.charAt(i))) {
                 output.append(input.charAt(i));
             }
-        }
-        return output.toString();
-    }
-
-    private String getLastSentence() {
-        StringBuilder output = new StringBuilder(processedWords.get(processedWords.size() - 1));
-        for (int i = processedWords.size() - 2; i >= 0
-                && !isReactionWord(processedWords.get(i)); i--) {
-            output = new StringBuilder(processedWords.get(i)).append(output);
         }
         return output.toString();
     }
@@ -1132,7 +1151,6 @@ public class TextAnalyser {
 
         if (reactionFound) {
             if (detectPerson() == 2) {
-                System.out.println("If is accessed");
                 if (reactionCount[0] > reactionCount[1]
                         && reactionCount[0] > reactionCount[2]) {
                     output = getReaction("happy");
@@ -1254,7 +1272,7 @@ public class TextAnalyser {
     }
 
     /**
-     * Keeps score of words that generate reactions. Returns appropiate text response.
+     * Keeps score of words that generate reactions. Returns proper text response.
      * 
      * @param originalInput The text given by the user
      * @return Text response based on the input
@@ -1268,19 +1286,18 @@ public class TextAnalyser {
         // position 0 is for happy, 1 is for sad, and 2 is for angry
         reactionCount = new int[3];
         for (int i = 0; i < numberOfWords; i++) {
-            word = getFirstWord(input);
+            word = getNextWord(input);
             processedWords.add(word);
             input = input.substring(word.length());
 
             // formatting the text
             if (i < numberOfWords - 1) {
-                auxWord = getFirstWord(input);
+                auxWord = getNextWord(input);
                 input = input.substring(input.indexOf(auxWord));
             }
 
             if (isHappyWord(word)) {
                 reactionFound = true;
-                System.out.println("\nPerson: " + detectPerson());
                 reactionCount[0]++;
                 globalReactionCount[0]++;
                 if (isSentenceNegated()) {
@@ -1291,7 +1308,6 @@ public class TextAnalyser {
                 }
             } else if (isSadWord(word)) {
                 reactionFound = true;
-                System.out.println("\nPerson: " + detectPerson());
                 reactionCount[1]++;
                 globalReactionCount[1]++;
                 if (isSentenceNegated()) {
@@ -1302,7 +1318,6 @@ public class TextAnalyser {
                 }
             } else if (isAngryWord(word)) {
                 reactionFound = true;
-                System.out.println("\nPerson: " + detectPerson());
                 reactionCount[2]++;
                 globalReactionCount[2]++;
                 if (isSentenceNegated()) {
@@ -1313,17 +1328,74 @@ public class TextAnalyser {
                 }
             }
         }
-
-        System.out.print("\nglobal reaction count: ");
-        for (int i = 0; i < 3; i++) {
-            System.out.print(globalReactionCount[i] + " ");
-        }
-        System.out.print("\nreaction count: ");
-        for (int i = 0; i < 3; i++) {
-            System.out.print(reactionCount[i] + " ");
-        }
-        System.out.println();
-
         return generateReaction(reactionFound);
+    }
+    
+    public ArrayList<String> getSynonyms(String word, int numberOfLevels) {
+        return synonymFinder.getSynonyms(word, numberOfLevels);
+    }
+    
+    public String learnWord(String word, int numberOfLevels) {
+        String reactionGeneratedByWord = "confused";
+        ArrayList<String> synonyms = getSynonyms(word, numberOfLevels);
+                boolean synonymIsAKnownWord = false;
+                for (int i = 0; i < synonyms.size() && !synonymIsAKnownWord; i++) {
+                    if (isHappyWord(synonyms.get(i))) {
+                        synonymIsAKnownWord = true;
+                        saveNewWord(word, "happy");
+                        reactionGeneratedByWord = "happy";
+                    } else if (isSadWord(synonyms.get(i))) {
+                        synonymIsAKnownWord = true;
+                        saveNewWord(word, "sad");
+                        reactionGeneratedByWord = "sad";
+                    } else if (isAngryWord(synonyms.get(i))) {
+                        synonymIsAKnownWord = true;
+                        saveNewWord(word, "angry");
+                        reactionGeneratedByWord = "angry";
+                    }
+                }
+        return reactionGeneratedByWord;
+    }
+    
+    public String reverseLearnWord(String word, int numberOfLevels) {
+        ArrayList<String> currentSynonyms = new ArrayList<>();
+        
+        for(String knownWord : happyWords) {
+            ArrayList<String> synonyms = getSynonyms(knownWord, numberOfLevels);
+            for(String synonym : synonyms) {
+                if(!currentSynonyms.contains(synonym)) {
+                    currentSynonyms.add(synonym);
+                }
+            }
+        }
+        if(currentSynonyms.contains(word)) {
+            saveNewWord(word, "happy");
+            return "happy";
+        }
+        for(String knownWord : sadWords) {
+            ArrayList<String> synonyms = getSynonyms(knownWord, numberOfLevels);
+            for(String synonym : synonyms) {
+                if(!currentSynonyms.contains(synonym)) {
+                    currentSynonyms.add(synonym);
+                }
+            }
+        }
+        if(currentSynonyms.contains(word)) {
+            saveNewWord(word, "sad");
+            return "sad";
+        }
+        for(String knownWord : angryWords) {
+            ArrayList<String> synonyms = getSynonyms(knownWord, numberOfLevels);
+            for(String synonym : synonyms) {
+                if(!currentSynonyms.contains(synonym)) {
+                    currentSynonyms.add(synonym);
+                }
+            }
+        }
+        if(currentSynonyms.contains(word)) {
+            saveNewWord(word, "angry");
+            return "angry";
+        }
+        return "confused";
     }
 }
